@@ -35,17 +35,18 @@ public class StudentService {
 
         selectedOption = sc.nextInt();
 
-        if (selectedOption >= 1 && selectedOption <= 6) {
-            System.out.println("|──────────────────────────────────────────────────────|");
-            switch (selectedOption) {
-                case 1: registerNewStudent();
-                case 2: searchStudentById();
-                case 3: updateStudent();
-                case 4: removeStudent();
-                case 5: getAllStudents();
-                case 6: backToMainMenu();
+        switch (selectedOption) {
+            case 1 -> registerNewStudent();
+            case 2 -> searchStudentById();
+            case 3 -> updateStudent();
+            case 4 -> removeStudent();
+            case 5 -> getAllStudents();
+            case 6 -> backToMainMenu();
+            default -> {
+                System.out.println("❌ Invalid option! Please enter a number between 1-6.");
+                manageStudentOptions();
             }
-            return;
+
         }
 
         System.out.println("|──────────────────────────────────────────────────────|");
@@ -53,7 +54,6 @@ public class StudentService {
         System.out.println("|   👉 Please enter a valid option between 1 and 6.    |");
 
         System.out.println("|──────────────────────────────────────────────────────|");
-        manageStudentOptions();
 
     }
 
@@ -108,14 +108,13 @@ public class StudentService {
             String confirm = sc.nextLine();
 
             if (confirm.equalsIgnoreCase("Y")) {
-                student.setActive(false);  // Soft delete
+                student.setActive(false);
                 System.out.println("✅ Student with ID " + sId + " has been removed.");
             } else {
                 System.out.println("⚠ Removal cancelled!");
             }
 
         } catch (EntityNotFoundException ex) {
-            // Friendly error message
             System.out.println(ex.getMessage());
         }
 
@@ -197,30 +196,36 @@ public class StudentService {
         System.out.println("|──────────────────────────────────────────────────────|");
 
         try {
-            Student student = InMemoryDb.studentList.stream()
-                    .filter(s -> s.getId() == sId)
+            Student s = InMemoryDb.studentList.stream()
+                    .filter(st -> st.getId() == sId)
                     .findFirst()
                     .orElseThrow(() -> new EntityNotFoundException(
                             "❌ Student with ID " + sId + " not found!"
                     ));
 
-            System.out.println("✅ Student Found!");
-            System.out.println("|──────────────────────────────────────────────────────|");
-            System.out.printf("| %-20s : %s%n", "Student ID", student.getId());
-            System.out.printf("| %-20s : %s%n", "First Name", student.getFirstName());
-            System.out.printf("| %-20s : %s%n", "Last Name", student.getLastName());
-            System.out.printf("| %-20s : %s%n", "Email", student.getEmail());
-            System.out.printf("| %-20s : %s%n", "Batch", student.getBatch());
-            System.out.printf("| %-20s : %s%n", "Active", student.isActive() ? "Yes" : "No");
-            System.out.println("|──────────────────────────────────────────────────────|");
+            System.out.println("╔═════════╦═════════════════╦═════════════════╦═══════════════════════════╦════════════╦════════╗");
+            System.out.println("║ ID      ║ First Name      ║ Last Name       ║ Email                     ║ Batch      ║ Active ║");
+            System.out.println("╠═════════╬═════════════════╬═════════════════╬═══════════════════════════╬════════════╬════════╣");
+
+            System.out.printf("║ %-7d ║ %-15s ║ %-15s ║ %-25s ║ %-10s ║ %-6s ║%n",
+                    s.getId(),
+                    s.getFirstName() == null ? "" : s.getFirstName(),
+                    s.getLastName() == null ? "" : s.getLastName(),
+                    s.getEmail() == null ? "" : s.getEmail(),
+                    s.getBatch() == null ? "" : s.getBatch(),
+                    s.isActive() ? "Yes" : "No");
+
+            System.out.println("╚═════════╩═════════════════╩═════════════════╩═══════════════════════════╩════════════╩════════╝");
 
         } catch (EntityNotFoundException ex) {
-            System.out.println(ex.getMessage());
-            System.out.println("|──────────────────────────────────────────────────────|");
+            System.out.println("╔══════════════════════════════════════════════════════╗");
+            System.out.printf("║ %-52s ║%n", ex.getMessage());
+            System.out.println("╚══════════════════════════════════════════════════════╝");
         }
 
         manageStudentOptions();
     }
+
 
     private void registerNewStudent() {
         Scanner sc = new Scanner(System.in);
@@ -275,7 +280,6 @@ public class StudentService {
         System.out.println("✅ Student Registered Successfully!");
         System.out.println("|──────────────────────────────────────────────────────|");
 
-        // Return to student menu
         manageStudentOptions();
     }
 

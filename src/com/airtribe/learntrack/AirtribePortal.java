@@ -1,5 +1,6 @@
 package com.airtribe.learntrack;
 
+import com.airtribe.learntrack.service.CourseService;
 import com.airtribe.learntrack.service.StudentService;
 import java.util.Scanner;
 
@@ -15,31 +16,40 @@ public class AirtribePortal {
         Scanner sc = new Scanner(System.in);
         int selectedOption;
 
-        System.out.println("╔══════════════════════════════════════════════════════╗");
-        System.out.println("║          🎓 AIRTRIBE COURSE MANAGEMENT SYSTEM        ║");
-        System.out.println("╠══════════════════════════════════════════════════════╣");
-        System.out.println("║                                                      ║");
-        System.out.println("║   1. Student Management                              ║");
-        System.out.println("║   2. Course Management                               ║");
-        System.out.println("║   3. Enrollment Management                           ║");
-        System.out.println("║                                                      ║");
-        System.out.println("╠══════════════════════════════════════════════════════╣");
-        System.out.print  ("║   Enter your choice (1-3): ");
+        while (true) {
 
-        selectedOption = sc.nextInt();
+            System.out.println("╔══════════════════════════════════════════════════════╗");
+            System.out.println("║          🎓 AIRTRIBE COURSE MANAGEMENT SYSTEM        ║");
+            System.out.println("╠══════════════════════════════════════════════════════╣");
+            System.out.println("║                                                      ║");
+            System.out.println("║   1. Student Management                              ║");
+            System.out.println("║   2. Course Management                               ║");
+            System.out.println("║   3. Enrollment Management                           ║");
+            System.out.println("║                                                      ║");
+            System.out.println("╠══════════════════════════════════════════════════════╣");
+            System.out.print  ("║   Enter your choice (1-3): ");
 
-        if (selectedOption >= 1 && selectedOption <= 3) {
+            String input = sc.nextLine().trim();
+
+            if (!input.matches("[1-3]")) {
+                System.out.println("╔══════════════════════════════════════════════════════╗");
+                System.out.println("║ ❌ Invalid input! Please enter only 1, 2 or 3.        ║");
+                System.out.println("╚══════════════════════════════════════════════════════╝");
+                continue;
+            }
+
+            selectedOption = Integer.parseInt(input);
             System.out.println("╚══════════════════════════════════════════════════════╝");
-            StudentService ss = new StudentService();
-            ss.manageStudent ();
-            return;
+
+            switch (selectedOption) {
+                case 1 -> new StudentService().manageStudent();
+                case 2 -> new CourseService().manageCourse();
+                default -> {
+                    System.out.println("❌ Invalid option! Please enter a number between 1-6.");
+                    managementOptions();
+                }
+            }
         }
-
-        System.out.println("╚══════════════════════════════════════════════════════╝");
-        System.out.println("║   ❌ Invalid option!                                  ║");
-        System.out.println("║   👉 Please enter a valid option between 1 and 3.    ║");
-
-        System.out.println("╚══════════════════════════════════════════════════════╝");
-        managementOptions();
     }
+
 }
